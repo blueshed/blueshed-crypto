@@ -3,6 +3,8 @@ services:
     webapp:
         container_name: blueshed-crypto
         build: .
+        environment:
+            DEBUG: 'true'
         volumes:
           - .:/opt/webapp/
         ports:

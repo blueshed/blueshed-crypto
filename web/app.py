@@ -1,5 +1,6 @@
 import logging
 import os
+from distutils.util import strtobool
 from pkg_resources import resource_filename
 import tornado.ioloop
 import tornado.log
@@ -8,9 +9,12 @@ from .main_handler import MainHandler
 
 
 def make_app():
+    debug = strtobool(os.getenv("DEBUG", "False"))
+    if debug:
+        logging.info("running in debug mode")
     return tornado.web.Application(
         [(r"/", MainHandler)],
-        debug=True,
+        debug=debug,
         static_path=resource_filename("web", "static"),
     )
 
