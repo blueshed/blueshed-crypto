@@ -1,0 +1,9 @@
+version: '3'
+services:
+    webapp:
+        container_name: blueshed-crypto
+        build: .
+        volumes:
+          - .:/opt/webapp/
+        ports:
+          - "8080:8080"

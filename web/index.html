@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>blueshed crypto</title>
+        <link type="shortcut" href="{{ static_url('favicon.ico') }}" />
+        <style type="text/css">
+body{
+    margin: 1em;
+    text-align: center;
+}
+.error{ color: red; }
+        </style>
+    </head>
+    <body>
+        <image src="{{ static_url('favicon.ico') }}" />
+        <h1>blueshed-crypto</h1>
+        <p>
+            This app will encrypt your message, with an optional passocde.<br/>
+            You can then send the message to someone and they can decrypt it.<br/>
+            You should send the passcode via a different channel.
+        </p>
+        <form method="POST" >
+            <textarea name="message" rows="6" cols="40"
+                placeholder="message">{{
+                    message if message else '' }}</textarea><br/>
+            <span>passcode</span>
+            <input type="text" name="passcode" value="{{
+                passcode if passcode else '' }}" /><br/>
+            {% if error_message is not None %}
+                <p class="error">{{ escape(error_message) }}</p>
+            {% end %}
+            <input type="submit" name="submit" value="encrypt" />
+            <input type="submit" name="submit" value="decrypt" />
+        </form>
+        {% if passcode %}
+        <p>Point your phone at this qrcode!</p>
+       <svg xmlns="http://www.w3.org/2000/svg">
+           {% raw qr_svg(passcode) %}
+       </svg>
+       {% end %}
+    </body>
+</html>
