@@ -31,4 +31,4 @@ def release(ctx):
     """ release to heroku (heroku container:login)"""
     ctx.run("heroku container:push web -a blueshed-crypto")
     ctx.run("heroku container:release web -a blueshed-crypto")
-    # ctx.run("heroku open -a blueshed-crypto")
+    ctx.run("heroku open -a blueshed-crypto")
