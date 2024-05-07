@@ -1,9 +1,14 @@
 """
     from https://devcenter.heroku.com/articles/container-registry-and-runtime
 """
-from invoke import task
+from invoke.tasks import task
 from cryptography.fernet import Fernet
-from web.main_handler import MainHandler
+from blueshed.crypto import api
+
+@task
+def run(ctx, debug=False):
+    """ run our server """
+    ctx.run(f'python3 -m blueshed.crypto.main{" --debug" if debug else ""}', pty=True)
 
 
 @task
@@ -17,13 +22,20 @@ def gen_key(_, path="key.key"):
 @task
 def encrypt(_, message):
     """ encrypts message with key file """
-    print(MainHandler.encrypt(message))
+    print(api.encrypt(message))
 
 
 @task
 def decrypt(_, message):
     """ decrypts message with key file """
-    print(MainHandler.decrypt(message))
+    print(api.decrypt(message))
+
+
+@task
+def lint(ctx):
+    """format and check"""
+    ctx.run('ruff format', pty=True)
+    ctx.run('ruff check --select I --fix', pty=True)
 
 
 @task

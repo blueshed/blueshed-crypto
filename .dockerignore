@@ -1,3 +1,11 @@
-.git/
-venv
 *.pyc
+.git/
+.venv
+src/blueshed_crypto.egg-info
+src/tests
+.dockerignore
+.gitignore
+docker-compose.yml
+Dockerfile
+Makefile
+tasks.py

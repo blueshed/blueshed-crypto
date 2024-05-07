@@ -1,26 +1,39 @@
-FROM python:3.9-slim
-RUN apt-get update && apt-get install -y git
+# temp stage
+FROM --platform=linux/amd64 python:3.12.3-slim as builder
 
-ADD ./requirements.txt /tmp/requirements.txt
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc
+
+# RUN apt-get update && apt-get install -y git
 
 # Install dependencies
-RUN pip3 install --upgrade pip
-RUN pip3 install --no-cache-dir -q -r /tmp/requirements.txt
+# RUN pip3 install --upgrade pip
+
+RUN pip install uv
+RUN uv venv /opt/venv
 
 # Add our code
-ADD . /opt/webapp/
-WORKDIR /opt/webapp
+ADD . /app
+WORKDIR /app
 
-# Expose is NOT supported by Heroku
-# EXPOSE 8080
-ENV PYTHONPATH ".:${PYTHONPATH}"
+RUN . /opt/venv/bin/activate && uv pip install .
+
+# final stage
+FROM --platform=linux/amd64 python:3.12.3-slim
+
+COPY --from=builder /opt/venv /opt/venv
+COPY --from=builder /app/key.key /app/key.key
+
+WORKDIR /app
+
+ENV PATH="/opt/venv/bin:$PATH"
+RUN . /opt/venv/bin/activate
 
 # Run the image as a non-root user
 RUN useradd -m myuser
-RUN chown myuser:myuser -R /opt/webapp/
+RUN chown myuser:myuser -R /app
 USER myuser
-
 
 # Run the app.  CMD is required to run on Heroku
 # $PORT is set by Heroku
-CMD python3 -m web.app
+CMD python3 -m blueshed.crypto.main
